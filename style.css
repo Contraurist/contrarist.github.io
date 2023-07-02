@@ -1,0 +1,53 @@
+body{
+    background: url(./1.jpg);
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#kana {
+    font-size: 88px;
+    margin: 20px 0;
+}
+
+#answer {
+    font-size: 18px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#result {
+    font-size: 28px;
+    margin-top: 10px;
+    color: #333;
+}
+
+input[type="range"] {
+    width: 300px;
+    margin-bottom: 10px;
+}
+
+button {
+    font-size: 16px;
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #e0e0e0;
+}

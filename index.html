@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>五十音测试</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>五十音测试</h1>
+        <div>
+            <label for="hiragana-weight">平假名的权重：</label>
+            <input type="range" id="hiragana-weight" min="0" max="10" value="3">
+          </div>
+          <div>
+            <label for="hiragana-youon-weight">平假拗音权重：</label>
+            <input type="range" id="hiragana-youon-weight" min="0" max="10" value="1">
+          </div>
+          <div>
+            <label for="katakana-weight">片假名的权重：</label>
+            <input type="range" id="katakana-weight" min="0" max="10" value="6">
+          </div>
+          <div>
+            <label for="katakana-youon-weight">片假拗音权重：</label>
+            <input type="range" id="katakana-youon-weight" min="0" max="10" value="2">
+          </div>
+          
+        <div id="kana"></div>
+        <input type="text" id="answer" placeholder="请输入罗马音">
+        <button onclick="checkAnswer()">提交</button>
+        <div id="result"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
