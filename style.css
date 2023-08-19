@@ -1,7 +1,5 @@
 body{
-    background: url(./1.jpg);
-    background-repeat: no-repeat;
-    background-size: 100% auto;
+    background: url(./media/1.png);
 }
 
 .container {
@@ -50,4 +48,8 @@ button {
 
 button:hover {
     background-color: #e0e0e0;
+}
+
+#checkbox {
+    margin-bottom: 20px;
 }
