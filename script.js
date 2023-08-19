@@ -218,6 +218,13 @@ var dictionary22 = {
     'ピョ': 'pyo'
 };
 
+var isWriteMode = false; // 写模式开关，默认关闭
+var isFastMode = false; // 速度模式开关，默认关闭
+var checkButton = document.getElementById("check");
+var termSave = ' ';
+var lockAccess = true;
+var lockAccess2 = true;
+
 function randomItem(dictionary) {
     var keys = Object.keys(dictionary);
     var randomKey = keys[Math.floor(Math.random() * keys.length)];
@@ -240,6 +247,7 @@ function getWeights() {
 
 function renderKana() {
     var item;
+    var mod;
     var weights = getWeights();
     
     var case1 = weights.Hiragana;
@@ -247,60 +255,152 @@ function renderKana() {
     var case3 = case2 + weights.Katakana;
     var case4 = case3 + weights.Katakana_youon;
     
-    var term = Math.floor(Math.random() * (weights.Hiragana + weights.Hiragana_youon + weights.Katakana + weights.Katakana_youon)) + 1;
-    
+    var term = Math.floor(Math.random() * case4);
+
     if (term < case1) {
         item = randomItem(dictionary1);
+        mod = 1;
     } else if (term >= case1 && term < case2) {
         item = randomItem(dictionary11);
+        mod = 1;
     } else if (term >= case2 && term < case3) {
         item = randomItem(dictionary2);
-    } else if (term >= case3) {
+        mod = 2;
+    } else if (term >= case3 && term < case4) {
         item = randomItem(dictionary22);
+        mod = 2;
+    } else{
+        item = randomItem(dictionary2);
+        mod = 2;
     }
 
-    document.getElementById('kana').innerText = item.kana;
+
+    if (isWriteMode) {
+        termSave = item.kana;
+        if (mod === 1) {
+            document.getElementById('kana').innerText = item.romaji;
+            document.getElementById('answer').placeholder = "请输入平假名";
+        } else{
+            document.getElementById('kana').innerText = item.romaji;
+            document.getElementById('answer').placeholder = "请输入片假名";
+        }
+    } else {
+        document.getElementById('kana').innerText = item.kana;
+        document.getElementById('answer').placeholder = "请输入罗马音";
+    }
     document.getElementById('answer').value = '';
     document.getElementById('result').innerText = '';
+    if (isFastMode) {
+        setTimeout(lockButton, 1600);
+    }
+    if(lockAccess2){
+        lockAccess2 = false;
+        setTimeout(() => {
+            lockAccess2 = true;
+        }, 2000);
+        
+        setTimeout(() => {
+            lockAccess = true;
+        }, 1000);
+    }
 }
+
+function lockButton(){
+    if(lockAccess){
+        lockAccess = false;
+        checkAnswer();
+    } else {
+        return false;
+    }
+}
+
+checkButton.addEventListener('click', lockButton);
 
 function checkAnswer() {
     var kana = document.getElementById('kana').innerText;
     var answer = document.getElementById('answer').value.trim();
     var dictionary;
+    var wrongKana;
+    var time = 1000;    
 
-    if (dictionary1.hasOwnProperty(kana)) {
-        dictionary = dictionary1;
-    } else if (dictionary11.hasOwnProperty(kana)) {
-        dictionary = dictionary11;
-    } else if (dictionary2.hasOwnProperty(kana)) {
-        dictionary = dictionary2;
-    } else {
-        dictionary = dictionary22;
-    }
-
-    if (dictionary[kana].toLowerCase() === answer.toLowerCase()) {
-        document.getElementById('result').innerText = '正确！';
-        setTimeout(renderKana, 630);
-    } else {
-        var time = 1800
-        var wrongKana = Object.keys(dictionary).find(key => dictionary[key].toLowerCase() === answer.toLowerCase());
-        if (wrongKana) {
-            document.getElementById('result').innerText = '你输入的假名是：' + wrongKana;
-            time += 1700;
+    var resultElement = document.getElementById('result');
+    var elementKana = document.getElementById('kana');
+    
+    if (isWriteMode) {
+        if (dictionary1.hasOwnProperty(termSave)) {
+            dictionary = dictionary1;
+        } else if (dictionary11.hasOwnProperty(termSave)) {
+            dictionary = dictionary11;
+        } else if (dictionary2.hasOwnProperty(termSave)) {
+            dictionary = dictionary2;
+        } else {
+            dictionary = dictionary22;
         }
-        document.getElementById('kana').innerText +=  " : " + dictionary[kana];
-        setTimeout(renderKana, time);
+        
+        if (answer === termSave) {
+            resultElement.innerText = '正确！';
+            setTimeout(renderKana, 630);
+        } else {
+            if (resultElement != '') {
+                var wrongKana = dictionary[answer];
+                if (wrongKana) {
+                    resultElement.innerText = '你输入的是：' + wrongKana;
+                }
+                time += 1000;
+            }
+            if (!(elementKana.innerText.includes(" : "))){
+                elementKana.innerText += " : " + termSave;
+            }
+            setTimeout(renderKana, time);
+        }
+    } else {
+        if (dictionary1.hasOwnProperty(kana)) {
+            dictionary = dictionary1;
+        } else if (dictionary11.hasOwnProperty(kana)) {
+            dictionary = dictionary11;
+        } else if (dictionary2.hasOwnProperty(kana)) {
+            dictionary = dictionary2;
+        } else {
+            dictionary = dictionary22;
+        }
+        if (dictionary[kana].toLowerCase() === answer.toLowerCase()) {
+            resultElement.innerText = '正确！';
+            setTimeout(renderKana, 630);
+        } else {
+            if (resultElement != '') {
+                wrongKana = Object.keys(dictionary).find(key => dictionary[key].toLowerCase() === answer.toLowerCase());
+                if (wrongKana) {
+                    resultElement.innerText = '你输入的假名是：' + wrongKana;
+                    time += 1500;
+                }
+            }
+            document.getElementById('kana').innerText +=  " : " + dictionary[kana];
+            setTimeout(renderKana, time);
+        }
     }
+}
+
+function toggleWriteMode() { 
+    isWriteMode = !isWriteMode;
+    renderKana();
+    document.getElementById('write-mode-checkbox').checked = isWriteMode;
+}
+
+function toggleFastMode() {
+    isFastMode = !isFastMode;
+    if(isFastMode){
+        renderKana();
+    }
+    document.getElementById('fast-mode-checkbox').checked = isFastMode;
 }
 
 function checkAnswerOnEnter(event) {
     if (event.keyCode === 13) {
-        checkAnswer();
+        lockButton();
     }
 }
 
-window.onload = function() {
+window.onload = function () {
     renderKana();
     document.getElementById('answer').addEventListener('keydown', checkAnswerOnEnter);
 };
